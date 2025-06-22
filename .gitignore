@@ -1,0 +1,8 @@
+vendor
+cache
+.idea
+
+# Docker related
+.docker/data
+docker-compose.override.yml
+*.log

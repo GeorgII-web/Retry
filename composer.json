@@ -1,0 +1,88 @@
+{
+  "name": "georgii-web/retry",
+  "type": "library",
+  "description": "A PHP package to wrap any piece of code with a retry algorithm.",
+  "keywords": [
+    "retry",
+    "algorithm",
+    "error-handling",
+    "resilience"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "georgii",
+      "email": "georgiiweb@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "GeorgII\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=8.2"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^11",
+    "pestphp/pest": "^3.8",
+    "vimeo/psalm": "v6.12",
+    "friendsofphp/php-cs-fixer": "^3.75",
+    "pestphp/pest-plugin-type-coverage": "^3.5",
+    "mockery/mockery": "^1.6"
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  },
+  "scripts": {
+    "disable-process-timeout": "Composer\\Config::disableProcessTimeout",
+    "sca": [
+      "@disable-process-timeout",
+      "vendor/bin/psalm --config=psalm.xml --diff --show-info=false --threads=2 --no-cache"
+    ],
+    "sca-baseline": [
+      "@disable-process-timeout",
+      "vendor/bin/psalm --config=psalm.xml --set-baseline=psalm-baseline.xml --threads=4"
+    ],
+    "cs": [
+      "@disable-process-timeout",
+      "vendor/bin/php-cs-fixer fix --ansi --config=.php-cs-fixer.dist.php --diff --verbose"
+    ],
+    "oncheckout": [
+      "@disable-process-timeout",
+      "composer install",
+      "composer dump-autoload",
+      "echo '\\n\\n\\033[1;32mAfter-checkout preparations done!\\033[0m\\n'"
+    ],
+    "oncommit": [
+      "@disable-process-timeout",
+      "@composer validate --strict",
+      "@composer cs",
+      "@composer sca",
+      "@composer test",
+      "@composer type",
+      "@composer coverage",
+      "echo '\\n\\n\\033[1;32mPre-commit checks passed!\\033[0m\\n'"
+    ],
+    "test": [
+      "@disable-process-timeout",
+      "./vendor/bin/pest"
+    ],
+    "type": [
+      "@disable-process-timeout",
+      "./vendor/bin/pest --type-coverage --min=100"
+    ],
+    "coverage": [
+      "@disable-process-timeout",
+      "./vendor/bin/pest --coverage --min=95"
+    ],
+    "mutate": [
+      "@disable-process-timeout",
+      "./vendor/bin/pest --mutate --parallel --everything --covered-only --min=40"
+    ]
+  }
+}
