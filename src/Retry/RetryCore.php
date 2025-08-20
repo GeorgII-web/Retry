@@ -207,20 +207,15 @@ class RetryCore
      */
     private function isRetriableException(Throwable $e): bool
     {
-        if (in_array($e::class, $this->exceptions, true)) {
-            return true;
+        // Exact match: only the exact class names listed are retriable
+        if ($this->isCheckExactException()) {
+            return in_array($e::class, $this->exceptions, true);
         }
 
-        if (!$this->isCheckExactException()) {
-            $parentExceptionName = get_parent_class($e);
-            if ($parentExceptionName !== false) {
-                $parentException = new $parentExceptionName($e->getMessage(), $e->getCode());
-                /**
-                 * @psalm-suppress ArgumentTypeCoercion Check the whole exceptions chain
-                 */
-                if ($this->isRetriableException($parentException)) {
-                    return true;
-                }
+        // Related match: allow parents/interfaces without instantiating them
+        foreach ($this->exceptions as $exceptionClass) {
+            if (is_a($e, $exceptionClass)) {
+                return true;
             }
         }
 
