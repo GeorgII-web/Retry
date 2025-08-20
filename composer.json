@@ -1,6 +1,5 @@
 {
   "name": "georgii-web/retry",
-  "version": "1.0.1",
   "type": "library",
   "description": "A PHP package to wrap any piece of code with a retry algorithm.",
   "keywords": [
